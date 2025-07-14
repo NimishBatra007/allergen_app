@@ -2,12 +2,13 @@ import streamlit as st
 import pandas as pd
 import re
 import psycopg2
-import os
 
-DB_USERNAME = os.getenv("DB_USERNAME")
-DB_PASSWORD = os.getenv("DB_PASSWORD")
-DB_HOST = os.getenv("DB_HOST")
-DB_NAME = os.getenv("DB_NAME")
+st.sidebar.header("Database Credentials")
+DB_USERNAME = st.sidebar.text_input("DB Username")
+DB_PASSWORD = st.sidebar.text_input("DB Password", type="password")
+DB_HOST = st.sidebar.text_input("DB Host")
+DB_NAME = st.sidebar.text_input("DB Name")
+
 
 # ---------------- DB CONNECTION ----------------
 def get_db_connection():
@@ -18,7 +19,13 @@ def get_db_connection():
         host=DB_HOST,
         port="5432"
     )
-
+if st.sidebar.button("Connect to Database"):
+    try:
+        conn = get_db_connection()
+        conn.close()
+        st.sidebar.success("✅ Connection Successful!")
+    except Exception as e:
+        st.sidebar.error(f"❌ Connection Failed: {str(e)}")
 
 # ---------------- HELPERS ----------------
 def fetch_material_info(material_nos):
